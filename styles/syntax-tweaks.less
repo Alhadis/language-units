@@ -1,5 +1,11 @@
 .theme-seti-syntax{
-	.syntax--variable.syntax--other.syntax--reference.syntax--units.syntax--gnu{
-		color: #7494a3;
+	.syntax--units.syntax--gnu{
+		&.syntax--variable.syntax--other.syntax--reference{
+			color: #7494a3;
+		}
+		&.syntax--string.syntax--unquoted.syntax--message-text,
+		&.syntax--string.syntax--unquoted.syntax--prompt-text{
+			color: #9ac4d7;
+		}
 	}
 }

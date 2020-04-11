@@ -1,0 +1,40 @@
+!locale value
+	# Load the following definitions only of the locale is set to value.
+	# End a block of definitions beginning with ‘’
+!endlocale
+
+!utf8
+	# Load the following definitions only if ‘units’ is running with UTF-8 enabled.
+	# End a block of definitions begun with ‘!utf8’
+!endutf8
+
+!include file # Include the specified file.
+
+!message text
+	# Display text when the database is read unless the quiet option (‘-q’) is enabled.  If you omit
+	# text, then units will display a blank line.  Messages will also appear in the log file.
+
+!prompt text
+	# Prefix  the  ‘You have:’  prompt with the specified text.  If you omit text, then any existing
+	# prefix is canceled.
+
+!set variable value
+	# Sets the environment variable, variable, to the specified value only if it is not already set.
+
+!unitlist alias defin;i/ti;on
+	# Define a unit list alias.
+
+
+!var envar value-list
+	# Load the block of definitions that follows only if the environment variable envar  is  set  to
+	# one  of  the  values  listed  in the space-separated value list.  If envar is not set, ‘units’
+	# prints an error message and ignores the block of definitions.
+!endvar
+
+!varnot envar value-list
+	# Load the block of definitions that follows only if the environment variable envar  is  set  to
+	# value  that  is  not  listed  in the space-separated value list.  If envar is not set, ‘units’
+	# prints an error message and ignores the block of definitions.
+!endvar
+
+!dunnolol foo bar # comment

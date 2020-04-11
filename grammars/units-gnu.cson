@@ -8,6 +8,7 @@ repository:
 		patterns: [
 			{include: "#comment"}
 			{include: "#prefix"}
+			{include: "#directives"}
 			{include: "#unit"}
 		]
 
@@ -21,6 +22,135 @@ repository:
 			0: name: "punctuation.definition.comment.units.gnu"
 
 
+	# Special directives beginning with `!`
+	directives:
+		patterns: [{
+			# !varnot [env-var] [value-list] … !endvar
+			name:  "meta.block.$2.units.gnu"
+			begin: "^\\s*(!)\\s*(varnot|var)(?=\\s|$|#)"
+			end:   "^\\s*(!)\\s*(endvar)(?=\\s|$|#)"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			endCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			patterns: [
+				{include: "#directiveEnvArgs"}
+				{include: "#main"}
+			]
+		},{
+			# !utf8 … !endutf8
+			name:  "meta.block.utf8.units.gnu"
+			begin: "^\\s*(!)\\s*(utf8)(?=\\s|$|#)(?:\\s*(#.*)?)$"
+			end:   "^\\s*(!)\\s*(endutf8)(?=\\s|$|#)"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+				3: patterns: [include: "#comment"]
+			endCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			patterns: [include: "#main"]
+		},{
+			# !locale [name] … !endlocale
+			name:  "meta.block.$2.units.gnu"
+			begin: "^\\s*(!)\\s*(locale)(?=\\s|$|#)"
+			end:   "^\\s*(!)\\s*(endlocale)(?=\\s|$|#)"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			endCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			patterns: [{
+				name: "constant.other.locale-name.units.gnu"
+				match: "\\G\\s*([^\\s#]+)"
+			}, include: "#main"]
+		},{
+			# !message [text]
+			name:  "meta.block.$2.units.gnu"
+			begin: "^\\s*(!)\\s*(message|prompt)(?=\\s|$)[ \\t]*"
+			end:   "\\s*$"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			contentName: "string.unquoted.$2-text.units.gnu"
+		},{
+			# !set [env-var] [value]
+			name:  "meta.block.$2.units.gnu"
+			begin: "^\\s*(!)\\s*(set)(?=\\s|$|#)"
+			end:   "$"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			endCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			patterns: [
+				{include: "#directiveEnvArgs"}
+				{include: "#main"}
+			]
+		},{
+			# !include [file]
+			name:  "meta.block.$2.units.gnu"
+			begin: "^\\s*(!)\\s*(include)(?=\\s|$)[ \\t]*"
+			end:   "\\s*(?=$|(?<=\\s)#)"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			contentName: "string.unquoted.filename.include.units.gnu"
+		},{
+			# !unitlist [alias] [definition]
+			name:  "meta.block.$2.units.gnu"
+			begin: "^\\s*(!)\\s*(unitlist)(?=\\s|$)[ \\t]*"
+			end:   "$"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.$2.units.gnu"
+			patterns: [{
+				name:  "entity.name.alias.units.gnu"
+				match: "\\G\\s*((?![.,_#])([^-~;+*/|\\t\\n^ ()]+)(?<![.,_]))"
+			},{
+				name: "punctuation.delimiter.semicolon.units.gnu"
+				match: ";"
+			}, include: "#rhs"]
+		},{
+			# !unknown [args]
+			name:  "meta.block.other.units.gnu"
+			begin: "^\\s*(!)\\s*(?!\\d)(\\w+)(?=\\s|$)[ \\t]*"
+			end:   "$"
+			beginCaptures:
+				1: name: "punctuation.definition.directive.units.gnu"
+				2: name: "keyword.control.directive.other.units.gnu"
+			patterns: [
+				{include: "#directiveArg"}
+				{include: "#comment"}
+			]
+		}]
+	
+	
+	# Argument to a `!directive`
+	directiveArg:
+		name: "constant.other.parameter.units.gnu"
+		match: "[^\\s#]\\S*"
+	
+	
+	# Arguments to get/set an environment variable
+	directiveEnvArgs:
+		name: "meta.arguments.units.gnu"
+		begin: "\\G"
+		end:   "$"
+		patterns: [
+			# Highlight first argument as a variable name
+			name: "variable.other.global.environment.units.gnu"
+			match: "(?:^|\\G)\\s*([^\\s#]+)"
+			
+			{include: "#directiveArg"}
+			{include: "#comment"}
+		]
+	
+	
 	# Float or integer
 	number:
 		name:  "constant.numeric.units.gnu"
