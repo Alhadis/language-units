@@ -294,7 +294,7 @@ repository:
 		},{
 			# !a!
 			name: "storage.modifier.primitive.labelled.units.gnu"
-			match: "(!)[^\\s#]+(!)(?=\\s|$)"
+			match: "(!)[^!\\s#]*(!)(?=\\s|$)"
 			captures:
 				1: name: "punctuation.definition.modifier.begin.units.gnu"
 				2: name: "punctuation.definition.modifier.end.units.gnu"
