@@ -179,7 +179,7 @@ repository:
 	# Float or integer
 	number:
 		name:  "constant.numeric.units.gnu"
-		match: "[-+]?[.,0-9]+(?:[-+]?[Ee][.,0-9]+)?"
+		match: "[-+]?[.,0-9]+(?:[Ee][-+]?[.,0-9]+)?"
 
 	
 	# Mathematical operators
