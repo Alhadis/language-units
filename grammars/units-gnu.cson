@@ -333,6 +333,7 @@ repository:
 			{match: "\\^|\\*{2}", name: "keyword.operator.arithmetic.exponentiation.units.gnu"}
 			{match: "\\*",        name: "keyword.operator.arithmetic.multiplication.units.gnu"}
 			{match: "\\+",        name: "keyword.operator.arithmetic.addition.units.gnu"}
+			{match: "~",          name: "keyword.operator.logical.inversion.invert.units.gnu"}
 			
 			# gunits(1) v2.02+ treats certain “Unicode dashes” as equivalent to ASCII hyphen-minus
 			name: "keyword.operator.arithmetic.subtraction.minus.dash.hyphen.units.gnu"
