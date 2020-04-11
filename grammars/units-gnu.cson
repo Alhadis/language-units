@@ -7,6 +7,7 @@ repository:
 	main:
 		patterns: [
 			{include: "#comment"}
+			{include: "#piecewise"}
 			{include: "#prefix"}
 			{include: "#escape"}
 			{include: "#function"}
@@ -256,19 +257,7 @@ repository:
 		endCaptures:   0: name: "punctuation.definition.interval.end.units.gnu"
 		patterns: [
 			{include: "#interval"}
-			{match: ";", name: "punctuation.delimiter.semicolon.units.gnu"}
-			{match: ",", name: "punctuation.delimiter.comma.units.gnu"}
-			{include: "#comment"}
-			{include: "#operators"}
-			{include: "#escape"}
-			{
-				name:  "constant.numeric.units.gnu"
-				match: "[-‒–−]?[.0-9]+(?:[Ee][-‒–−+]?[.0-9]+)?"
-			}
-			{
-				name: "variable.other.constant.unit.reference.units.gnu"
-				match: "(?![.,_])(?:[^-‒–−~;+*/|\\t\\n^\\x20()\\[\\]#\\\\]|\\\\.)++(?<![.,_])"
-			}
+			{include: "#rhsBracketed"}
 		]
 
 
@@ -338,6 +327,28 @@ repository:
 		]
 
 
+	# Piecewise linear unit definition
+	piecewise:
+		name:  "meta.piecewise.unit.definition.units.gnu"
+		begin: "^\\s*((?![.,_\\d])(?:[^-‒–−~;+*/|\\t\\n^ ()#\\[\\]\\\\]|\\\\.)++(?<![.,_]))(?=\\[)"
+		end:   "(?<!\\\\)$"
+		beginCaptures:
+			1: name: "entity.name.function.units.gnu"
+		patterns: [
+			name:  "meta.output-unit.units.gnu"
+			begin: "\\G\\["
+			end:   "\\]"
+			beginCaptures: 0: name: "punctuation.definition.square.bracket.begin.units.gnu"
+			endCaptures:   0: name: "punctuation.definition.square.bracket.end.units.gnu"
+			patterns: [include: "#rhsBracketed"]
+			
+			{match: "\\bnoerror\\b", name: "storage.modifier.noerror.units.gnu"}
+			{include: "#number"}
+			{include: "#comment"}
+			{include: "#escape"}
+		]
+
+
 	# Prefix definition
 	prefix:
 		name:  "meta.prefix.definition.units.gnu"
@@ -383,6 +394,25 @@ repository:
 			{include: "#reference"}
 			{include: "#escape"}
 			{include: "#brackets"}
+		]
+
+
+	# Variant of the above that avoids swallowing commas or square-brackets
+	rhsBracketed:
+		patterns: [
+			{match: ";", name: "punctuation.delimiter.semicolon.units.gnu"}
+			{match: ",", name: "punctuation.delimiter.comma.units.gnu"}
+			{include: "#comment"}
+			{include: "#operators"}
+			{include: "#escape"}
+			{
+				name:  "constant.numeric.units.gnu"
+				match: "[-‒–−]?[.0-9]+(?:[Ee][-‒–−+]?[.0-9]+)?"
+			}
+			{
+				name: "variable.other.constant.unit.reference.units.gnu"
+				match: "(?![.,_])(?:[^-‒–−~;+*/|\\t\\n^\\x20()\\[\\]#\\\\]|\\\\.)++(?<![.,_])"
+			}
 		]
 
 
