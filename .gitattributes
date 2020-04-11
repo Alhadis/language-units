@@ -1,0 +1,6 @@
+# Include CSON grammars in repository's language stats
+*.cson linguist-detectable=true
+
+# Exclude unnecessary files from distribution
+/samples/* export-ignore
+*.png      export-ignore
