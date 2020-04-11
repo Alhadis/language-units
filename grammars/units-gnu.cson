@@ -151,6 +151,31 @@ repository:
 		]
 	
 	
+	# Stuff like !this
+	modifiers:
+		patterns: [{
+			# !dimensionless
+			name: "storage.modifier.dimensionless.units.gnu"
+			match: "(!)dimensionless(?=\\s|$)"
+			captures:
+				1: name: "punctuation.definition.modifier.units.gnu"
+		},{
+			# !a!
+			name: "storage.modifier.primitive.labelled.units.gnu"
+			match: "(!)([^\\s#]+)(!)(?=\\s|$)"
+			captures:
+				1: name: "punctuation.definition.modifier.begin.units.gnu"
+				2: name: "string.quoted.exclamation-marks.units.gnu"
+				3: name: "punctuation.definition.modifier.end.units.gnu"
+		},{
+			# !
+			name: "storage.modifier.primitive.units.gnu"
+			match: "!(?=\\s|$)"
+			captures:
+				0: name: "punctuation.definition.modifier.begin.units.gnu"
+		}]
+	
+	
 	# Float or integer
 	number:
 		name:  "constant.numeric.units.gnu"
@@ -208,6 +233,7 @@ repository:
 		patterns: [
 			{include: "#number"}
 			{include: "#comment"}
+			{include: "#modifiers"}
 			{include: "#operators"}
 			{include: "#reference"}
 		]
