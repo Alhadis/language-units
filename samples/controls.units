@@ -10,9 +10,18 @@
 
 !include file # Include the specified file.
 
+!include too\
+damn # long
+
 !message text
 	# Display text when the database is read unless the quiet option (‘-q’) is enabled.  If you omit
 	# text, then units will display a blank line.  Messages will also appear in the log file.
+
+!message too # damn \
+long
+
+!message too\
+damn # long
 
 !prompt text
 	# Prefix  the  ‘You have:’  prompt with the specified text.  If you omit text, then any existing
@@ -38,3 +47,6 @@
 !endvar
 
 !dunnolol foo bar # comment
+
+!still too\
+damn long

@@ -8,6 +8,7 @@ repository:
 		patterns: [
 			{include: "#comment"}
 			{include: "#prefix"}
+			{include: "#escape"}
 			{include: "#directives"}
 			{include: "#unit"}
 		]
@@ -17,9 +18,10 @@ repository:
 	comment:
 		name:  "comment.line.number-sign.units.gnu"
 		begin: "#"
-		end:   "$"
+		end:   "(?<!\\\\)$"
 		beginCaptures:
 			0: name: "punctuation.definition.comment.units.gnu"
+		patterns: [include: "#escape"]
 
 
 	# Special directives beginning with `!`
@@ -71,16 +73,17 @@ repository:
 			# !message [text]
 			name:  "meta.block.$2.units.gnu"
 			begin: "^\\s*(!)\\s*(message|prompt)(?=\\s|$)[ \\t]*"
-			end:   "\\s*$"
+			end:   "\\s*(?=(?<!\\\\)$|(?<=\\s)#)"
 			beginCaptures:
 				1: name: "punctuation.definition.directive.units.gnu"
 				2: name: "keyword.control.directive.$2.units.gnu"
 			contentName: "string.unquoted.$2-text.units.gnu"
+			patterns: [include: "#escape"]
 		},{
 			# !set [env-var] [value]
 			name:  "meta.block.$2.units.gnu"
 			begin: "^\\s*(!)\\s*(set)(?=\\s|$|#)"
-			end:   "$"
+			end:   "(?<!\\\\)$"
 			beginCaptures:
 				1: name: "punctuation.definition.directive.units.gnu"
 				2: name: "keyword.control.directive.$2.units.gnu"
@@ -95,16 +98,17 @@ repository:
 			# !include [file]
 			name:  "meta.block.$2.units.gnu"
 			begin: "^\\s*(!)\\s*(include)(?=\\s|$)[ \\t]*"
-			end:   "\\s*(?=$|(?<=\\s)#)"
+			end:   "\\s*(?=(?<!\\\\)$|(?<=\\s)#)"
 			beginCaptures:
 				1: name: "punctuation.definition.directive.units.gnu"
 				2: name: "keyword.control.directive.$2.units.gnu"
 			contentName: "string.unquoted.filename.include.units.gnu"
+			patterns: [include: "#escape"]
 		},{
 			# !unitlist [alias] [definition]
 			name:  "meta.block.$2.units.gnu"
 			begin: "^\\s*(!)\\s*(unitlist)(?=\\s|$)[ \\t]*"
-			end:   "$"
+			end:   "(?<!\\\\)$"
 			beginCaptures:
 				1: name: "punctuation.definition.directive.units.gnu"
 				2: name: "keyword.control.directive.$2.units.gnu"
@@ -119,13 +123,14 @@ repository:
 			# !unknown [args]
 			name:  "meta.block.other.units.gnu"
 			begin: "^\\s*(!)\\s*(?!\\d)(\\w+)(?=\\s|$)[ \\t]*"
-			end:   "$"
+			end:   "(?<!\\\\)$"
 			beginCaptures:
 				1: name: "punctuation.definition.directive.units.gnu"
 				2: name: "keyword.control.directive.other.units.gnu"
 			patterns: [
 				{include: "#directiveArg"}
 				{include: "#comment"}
+				{include: "#escape"}
 			]
 		}]
 	
@@ -133,24 +138,34 @@ repository:
 	# Argument to a `!directive`
 	directiveArg:
 		name: "constant.other.parameter.units.gnu"
-		match: "[^\\s#]\\S*"
+		match: "(?:[^\\s#\\\\]|\\\\.)+"
 	
 	
 	# Arguments to get/set an environment variable
 	directiveEnvArgs:
 		name: "meta.arguments.units.gnu"
 		begin: "\\G"
-		end:   "$"
+		end:   "(?<!\\\\)$"
 		patterns: [
 			# Highlight first argument as a variable name
 			name: "variable.other.global.environment.units.gnu"
-			match: "(?:^|\\G)\\s*([^\\s#]+)"
+			match: "(?:^|\\G)\\s*((?:[^\\s#\\\\]|\\\\.)+)"
 			
+			{include: "#escape"}
 			{include: "#directiveArg"}
 			{include: "#comment"}
 		]
 	
 	
+	# Line continuation
+	escape:
+		name:  "constant.character.escape.newline.units.gnu"
+		begin: "(\\\\)$[\\n\\r]*"
+		end:   "(?<=\\n|^)"
+		beginCaptures:
+			1: name: "punctuation.definition.escape.units.gnu"
+
+
 	# Stuff like !this
 	modifiers:
 		patterns: [{
@@ -215,7 +230,7 @@ repository:
 			# Followed by whitespace
 			(?=\\s|$)
 		"""
-		end: "$"
+		end: "(?<!\\\\)$"
 		beginCaptures:
 			1: name: "entity.name.prefix.units.gnu"
 			2: name: "punctuation.definition.prefix.units.gnu"
@@ -225,7 +240,11 @@ repository:
 	# Reference to another unit
 	reference:
 		name: "variable.other.constant.unit.reference.units.gnu"
-		match: "(?![.,_#])([^-~;+*/|\\t\\n^\\x20()]+)(?<![.,_])"
+		match: """(?x)
+			(?![.,_\\#])
+			(?:[^-~;+*/|\\t\\n^\\x20()\\#\\\\]|\\\\.)++
+			(?<![.,_])
+		"""
 	
 	
 	# Actual definition following a unit or prefix name
@@ -236,6 +255,7 @@ repository:
 			{include: "#modifiers"}
 			{include: "#operators"}
 			{include: "#reference"}
+			{include: "#escape"}
 		]
 
 
@@ -243,7 +263,7 @@ repository:
 	unit:
 		name:  "meta.unit.definition.units.gnu"
 		begin: "^\\s*(?![.,_#])([^-~;+*/|\\t\\n^ ()]+)(?<![.,_])(?=\\s|$)"
-		end:   "$"
+		end:   "(?<!\\\\)$"
 		beginCaptures:
 			1: name: "entity.name.unit.units.gnu"
 		patterns: [include: "#rhs"]
