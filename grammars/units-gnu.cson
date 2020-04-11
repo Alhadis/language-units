@@ -7,6 +7,8 @@ repository:
 	main:
 		patterns: [
 			{include: "#comment"}
+			{include: "#prefix"}
+			{include: "#unit"}
 		]
 
 
@@ -24,13 +26,27 @@ repository:
 		name:  "constant.numeric.units.gnu"
 		match: "[-+]?[.,0-9]+(?:[-+]?[Ee][.,0-9]+)?"
 
+	
+	# Mathematical operators
+	operators:
+		patterns: [
+			{match: "/|\\|",      name: "keyword.operator.arithmetic.division.units.gnu"}
+			{match: "\\^|\\*{2}", name: "keyword.operator.arithmetic.exponentiation.units.gnu"}
+			{match: "\\*",        name: "keyword.operator.arithmetic.multiplication.units.gnu"}
+			{match: "\\+",        name: "keyword.operator.arithmetic.addition.units.gnu"}
+			
+			# gunits(1) v2.02+ treats certain “Unicode dashes” as equivalent to ASCII hyphen-minus
+			name: "keyword.operator.arithmetic.subtraction.minus.dash.hyphen.units.gnu"
+			match: "-|\\u2012|\\u2013|\\u2212"
+		]
+
 
 	# Prefix definition
 	prefix:
 		name:  "meta.prefix.definition.units.gnu"
 		begin: """(?x) ^\\s*
 			# Valid unit name (source: `parse.y`)
-			(?![.,_])
+			(?![.,_\\#])
 			([^-~;+*/|\\t\\n^\\x20()]+)
 			(?<![.,_])
 			
@@ -51,8 +67,27 @@ repository:
 		patterns: [include: "#rhs"]
 	
 	
+	# Reference to another unit
+	reference:
+		name: "variable.other.constant.unit.reference.units.gnu"
+		match: "(?![.,_#])([^-~;+*/|\\t\\n^\\x20()]+)(?<![.,_])"
+	
+	
 	# Actual definition following a unit or prefix name
 	rhs:
 		patterns: [
 			{include: "#number"}
+			{include: "#comment"}
+			{include: "#operators"}
+			{include: "#reference"}
 		]
+
+
+	# Unit definition
+	unit:
+		name:  "meta.unit.definition.units.gnu"
+		begin: "^\\s*(?![.,_#])([^-~;+*/|\\t\\n^ ()]+)(?<![.,_])(?=\\s|$)"
+		end:   "$"
+		beginCaptures:
+			1: name: "entity.name.unit.units.gnu"
+		patterns: [include: "#rhs"]
