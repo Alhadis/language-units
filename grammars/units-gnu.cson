@@ -1,0 +1,58 @@
+name: "Units (GNU)"
+scopeName: "source.units.gnu"
+fileTypes: ["units", "units.dat"]
+patterns: [include: "#main"]
+
+repository:
+	main:
+		patterns: [
+			{include: "#comment"}
+		]
+
+
+	# Comment
+	comment:
+		name:  "comment.line.number-sign.units.gnu"
+		begin: "#"
+		end:   "$"
+		beginCaptures:
+			0: name: "punctuation.definition.comment.units.gnu"
+
+
+	# Float or integer
+	number:
+		name:  "constant.numeric.units.gnu"
+		match: "[-+]?[.,0-9]+(?:[-+]?[Ee][.,0-9]+)?"
+
+
+	# Prefix definition
+	prefix:
+		name:  "meta.prefix.definition.units.gnu"
+		begin: """(?x) ^\\s*
+			# Valid unit name (source: `parse.y`)
+			(?![.,_])
+			([^-~;+*/|\\t\\n^\\x20()]+)
+			(?<![.,_])
+			
+			# Dash indicating a prefix
+			( \\u2012  # Figure dash
+			| \\u2013  # En dash
+			| \\u2212  # Minus
+			| -        # ASCII “hyphen-minus”
+			)
+			
+			# Followed by whitespace
+			(?=\\s|$)
+		"""
+		end: "$"
+		beginCaptures:
+			1: name: "entity.name.prefix.units.gnu"
+			2: name: "punctuation.definition.prefix.units.gnu"
+		patterns: [include: "#rhs"]
+	
+	
+	# Actual definition following a unit or prefix name
+	rhs:
+		patterns: [
+			{include: "#number"}
+		]
