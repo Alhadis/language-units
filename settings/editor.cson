@@ -1,0 +1,8 @@
+".source.units.gnu":
+	editor:
+		commentStart: "# "
+
+".source.units.bsd":
+	editor:
+		commentStart: "/ "
+		tabLength: 8
