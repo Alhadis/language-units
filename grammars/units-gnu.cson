@@ -9,9 +9,19 @@ repository:
 			{include: "#comment"}
 			{include: "#prefix"}
 			{include: "#escape"}
+			{include: "#function"}
 			{include: "#directives"}
 			{include: "#unit"}
 		]
+
+
+	# Parentheses/round brackets
+	brackets:
+		begin: "\\("
+		end:   "\\)"
+		beginCaptures: 0: name: "punctuation.definition.round.bracket.begin.units.gnu"
+		endCaptures:   0: name: "punctuation.definition.round.bracket.end.units.gnu"
+		patterns: [include: "#rhs"]
 
 
 	# Comment
@@ -166,6 +176,124 @@ repository:
 			1: name: "punctuation.definition.escape.units.gnu"
 
 
+	# Non-linear units
+	function:
+		patterns: [{
+			# Function alias
+			name:  "meta.function.alias.units.gnu"
+			begin: "^\\s*((?![.,_\\d])(?:[^-~;+*/|\\t\\n^ ()#\\\\]|\\\\.)++(?<![.,_]))(\\()(\\))(?=\\s|$)"
+			end:   "(?<!\\\\)$"
+			beginCaptures:
+				1: name: "entity.name.function.alias.units.gnu"
+				2: name: "punctuation.definition.round.bracket.begin.units.gnu"
+				3: name: "punctuation.definition.round.bracket.end.units.gnu"
+			patterns: [
+				# Highlight first parameter only
+				match: "\\G\\s*((?![.,_\\d])(?:[^-~;+*/|\\t\\n^ ()#\\\\]|\\\\.)++(?<![.,_]))"
+				captures:
+					1: name: "entity.name.function.units.gnu"
+				
+				{include: "#comment"}
+				{include: "#escape"}
+			]
+		},{
+			# Function definition
+			name:  "meta.function.definition.units.gnu"
+			begin: """(?x) ^\\s*
+				# Function name
+				((?![.,_\\d])(?:[^-~;+*/|\\t\\n^\\x20()\\#\\\\]|\\\\.)++(?<![.,_]))
+				
+				# Parameter name
+				(
+					(\\()
+					((?![.,_\\d])(?:[^-~;+*/|\\t\\n^\\x20()\\#\\\\]|\\\\.)++(?<![.,_]))
+					(\\))
+				)
+			"""
+			end: "(?<!\\\\)$"
+			beginCaptures:
+				1: name: "entity.name.function.units.gnu"
+				2: name: "meta.function.parameters.units.gnu"
+				3: name: "punctuation.definition.round.bracket.begin.units.gnu"
+				4: name: "variable.parameter.function.units.gnu"
+				5: name: "punctuation.definition.round.bracket.end.units.gnu"
+			patterns: [{
+				
+				# Optional keywords before a function definition:
+				name:  "meta.function.optional-keywords.units.gnu"
+				begin: "\\G"
+				end:   "(?=[^\\s#])(?!\\bnoerror\\b|\\b(?:units|domain|range)=[\\[(]|\\\\$)"
+				patterns: [{
+					name: "storage.modifier.noerror.units.gnu"
+					match: "\\bnoerror\\b"
+				},{
+					name:  "meta.$1-list.units.gnu"
+					begin: "\\b(units|domain|range)(=)(?=\\[|\\()"
+					end:   "(?<=\\]|\\))"
+					beginCaptures:
+						1: name: "storage.type.$1.units.gnu"
+						2: name: "keyword.operator.assignment.units.gnu"
+					patterns: [include: "#interval"]
+				}, {include: "#comment"}, {include: "#escape"}]
+			},{
+				# Optional inversion definition
+				name:  "meta.function.inverse.units.gnu"
+				begin: ";"
+				end:   "(?<!\\\\)$"
+				beginCaptures:
+					0: name: "punctuation.separator.semicolon.units.gnu"
+				patterns: [include: "#rhs"]
+			}, include: "#rhs"]
+		}]
+
+	
+	# [x,y] (x,y)
+	interval:
+		name:  "meta.interval.units.gnu"
+		begin: "\\[|\\("
+		end:   "\\]|\\)"
+		beginCaptures: 0: name: "punctuation.definition.interval.begin.units.gnu"
+		endCaptures:   0: name: "punctuation.definition.interval.end.units.gnu"
+		patterns: [
+			{include: "#interval"}
+			{match: ";", name: "punctuation.delimiter.semicolon.units.gnu"}
+			{match: ",", name: "punctuation.delimiter.comma.units.gnu"}
+			{include: "#comment"}
+			{include: "#operators"}
+			{include: "#escape"}
+			{
+				name:  "constant.numeric.units.gnu"
+				match: "-?[.0-9]+(?:[Ee][-+]?[.0-9]+)?"
+			}
+			{
+				name: "variable.other.constant.unit.reference.units.gnu"
+				match: "(?![.,_])(?:[^-~;+*/|\\t\\n^\\x20()\\[\\]#\\\\]|\\\\.)++(?<![.,_])"
+			}
+		]
+
+
+	# fn(var)
+	functionCall:
+		name:  "meta.function-call.units.gnu"
+		begin: "((?![.,_\\d])(?:[^-~;+*/|\\t\\n^ ()#\\\\]|\\\\.)++(?<![.,_]))\\s*(\\()"
+		end:   "\\)"
+		beginCaptures:
+			1: patterns: [{
+				# Built-in functions
+				name: "support.function.built-in.units.gnu"
+				match: "^(?:acosh?|asinh?|atanh?|cosh?|cuberoot|exp|ln|log[0-9]*|sinh?|sqrt|tanh?)$"
+			},{
+				# User/library-defined function
+				name: "entity.name.function.units.gnu"
+				match: ".+"
+			}]
+			2: name: "punctuation.definition.arguments.begin.units.gnu"
+		endCaptures:
+			0: name: "punctuation.definition.arguments.end.units.gnu"
+		contentName: "meta.arguments.units.gnu"
+		patterns: [include: "#rhs"]
+
+
 	# Stuff like !this
 	modifiers:
 		patterns: [{
@@ -201,6 +329,7 @@ repository:
 	operators:
 		patterns: [
 			{match: "/|\\|",      name: "keyword.operator.arithmetic.division.units.gnu"}
+			{match: "\\bper\\b",  name: "keyword.operator.arithmetic.division.per.units.gnu"}
 			{match: "\\^|\\*{2}", name: "keyword.operator.arithmetic.exponentiation.units.gnu"}
 			{match: "\\*",        name: "keyword.operator.arithmetic.multiplication.units.gnu"}
 			{match: "\\+",        name: "keyword.operator.arithmetic.addition.units.gnu"}
@@ -256,10 +385,12 @@ repository:
 		patterns: [
 			{include: "#number"}
 			{include: "#comment"}
+			{include: "#functionCall"}
 			{include: "#modifiers"}
 			{include: "#operators"}
 			{include: "#reference"}
 			{include: "#escape"}
+			{include: "#brackets"}
 		]
 
 
