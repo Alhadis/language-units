@@ -294,11 +294,10 @@ repository:
 		},{
 			# !a!
 			name: "storage.modifier.primitive.labelled.units.gnu"
-			match: "(!)([^\\s#]+)(!)(?=\\s|$)"
+			match: "(!)[^\\s#]+(!)(?=\\s|$)"
 			captures:
 				1: name: "punctuation.definition.modifier.begin.units.gnu"
-				2: name: "string.quoted.exclamation-marks.units.gnu"
-				3: name: "punctuation.definition.modifier.end.units.gnu"
+				2: name: "punctuation.definition.modifier.end.units.gnu"
 		},{
 			# !
 			name: "storage.modifier.primitive.units.gnu"
