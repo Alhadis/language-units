@@ -1,6 +1,6 @@
 {
 	"name": "language-units",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Syntax highlighting for `units` definition files.",
 	"keywords": ["units", "gunits", "SI", "imperial", "metrics", "measurement", "size", "length", "weight"],
 	"repository": "https://github.com/Alhadis/language-units",

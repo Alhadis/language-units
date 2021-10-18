@@ -3,13 +3,16 @@ Change Log
 
 This project adheres to [Semantic Versioning](http://semver.org).
 
-[Staged]: ../../compare/v1.0.0...HEAD
+[Staged]: ../../compare/v1.0.1...HEAD
 
 
-[Staged]
+[v1.0.1]
 ------------------------------------------------------------------------
+**October 18th, 2021**  
 * __Added:__ Support for `unittab` files, used on Solaris
 * __Added:__ This change-log
+
+[v1.0.1]: https://github.com/Alhadis/language-units/releases/tag/v1.0.1
 
 
 [v1.0.0]
