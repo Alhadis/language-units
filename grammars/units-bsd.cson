@@ -1,7 +1,7 @@
 # Legacy format used by the original BSD-licensed version
 name: "Units (BSD)"
 scopeName: "source.units.bsd"
-fileTypes: ["units.lib"]
+fileTypes: ["units.lib", "unittab"]
 patterns: [include: "#main"]
 
 repository:
